@@ -102,7 +102,7 @@ module Prawn
         x,y = map_to_absolute(options[:at]) 
       else                  
         x,y = image_position(w,h,options) 
-        move_text_position h   
+        move_text_position h  unless options[:no_display]
       end
 
       # add a reference to the image object to the current page
@@ -110,9 +110,11 @@ module Prawn
       label = "I#{next_image_id}"
       state.page.xobjects.merge!( label => image_obj )
 
-      # add the image to the current page
-      instruct = "\nq\n%.3f 0 0 %.3f %.3f %.3f cm\n/%s Do\nQ"
-      add_content instruct % [ w, h, x, y - h, label ]
+      unless options[:no_display]
+        # add the image to the current page
+        instruct = "\nq\n%.3f 0 0 %.3f %.3f %.3f cm\n/%s Do\nQ"
+        add_content instruct % [ w, h, x, y - h, label ]
+      end
       
       return info
     end
